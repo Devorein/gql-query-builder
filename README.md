@@ -25,7 +25,7 @@ subscription(options: object)
 ```typescript
 import * as gql from 'gql-query-builder'
 
-const query = gql.query(options: object, adapter?: MyCustomQueryAdapter)
+const query = gql.query(options: object, adapter?: MyCustomQueryAdapter,config?: object)
 const mutation = gql.mutation(options: object, adapter?: MyCustomQueryAdapter)
 const subscription = gql.subscription(options: object, adapter?: MyCustomSubscriptionAdapter)
 ```
@@ -36,60 +36,105 @@ const subscription = gql.subscription(options: object, adapter?: MyCustomSubscri
 
 <table width="100%">
   <thead>
-    <tr>
-      <th>Name</th>
-      <th>Description</th>
-      <th>Type</th>
-      <th>Required</th>
-      <th>Example</th>
-    </tr>
+
+  <tr>
+
+    <th>Name</th>
+    <th>Description</th>
+    <th>Type</th>
+    <th>Required</th>
+    <th>Example</th>
+
+  </tr>
+
   </thead>
   <tbody>
-    <tr>
-      <td>operation</td>
-      <td>Name of operation to be executed on server</td>
-      <td>String</td>
-      <td>Yes</td>
-      <td>
-        getThoughts, createThought
-      </td>
-    </tr>
-    <tr>
-      <td>fields</td>
-      <td>Selection of fields</td>
-      <td>Array</td>
-      <td>No</td>
-      <td>
-        <code>['id', 'name', 'thought']</code>
-        <br/><br />
-        <code>['id', 'name', 'thought', { user: ['id', 'email'] }]</code>
-      </td>
-    </tr>
-    <tr>
-      <td>variables</td>
-      <td>Variables sent to the operation</td>
-      <td>Object</td>
-      <td>No</td>
-      <td>
-        { key: value } eg: <code>{ id: 1 }</code>
-        <br/><br/>
-        { key: { value: value, required: true, type: GQL type, list: true } eg:
-        <br />
-        <code>
-        {
-          email: { value: "user@example.com", required: true },
-          password: { value: "123456", required: true },
-          secondaryEmails: { value: [], required: false, type: 'String', list: true }
-        }
-        </code>
-      </td>
-    </tr>
+
+  <tr>
+
+    <td>operation</td>
+    <td>Name of operation to be executed on server</td>
+    <td>String</td>
+    <td>Yes</td>
+    <td>
+      getThoughts, createThought
+    </td>
+
+  </tr>
+  <tr>
+
+    <td>fields</td>
+    <td>Selection of fields</td>
+    <td>Array</td>
+    <td>No</td>
+    <td>
+      <code>['id', 'name', 'thought']</code>
+      <br/><br />
+      <code>['id', 'name', 'thought', { user: ['id', 'email'] }]</code>
+    </td>
+
+  </tr>
+  <tr>
+
+    <td>variables</td>
+    <td>Variables sent to the operation</td>
+    <td>Object</td>
+    <td>No</td>
+    <td>
+      { key: value } eg: <code>{ id: 1 }</code>
+      <br/><br/>
+      { key: { value: value, required: true, type: GQL type, list: true,name: argument name } eg:
+      <br />
+      <code>
+      {
+        email: { value: "user@example.com", required: true },
+        password: { value: "123456", required: true },
+        secondaryEmails: { value: [], required: false, type: 'String', list: true,name: secondaryEmail }
+      }
+      </code>
+    </td>
+
+  </tr>
+
+  </tbody>
+</table>
+
+#### config
+
+<table width="100%">
+  <thead>
+
+  <tr>
+
+    <th>Name</th>
+    <th>Description</th>
+    <th>Type</th>
+    <th>Required</th>
+    <th>Example</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+  <tr>
+
+    <td>operationName</td>
+    <td>Name of operation to be sent to the server</td>
+    <td>String</td>
+    <td>No</td>
+    <td>
+      getThoughts, createThought
+    </td>
+
+  </tr>
+
   </tbody>
 </table>
 
 ## Adapter
 
-An optional second argument `adapter` is a typescript/javascript class that implements `src/adapters/IQueryAdapter` or `src/adapters/IMutationAdapter`.
+An optional second argument `adapter` is a typescript/javascript class that implements `src/adapters/IQueryAdapter` or `src/adapters/IMutationAdapter` .
 
 If adapter is undefined then `src/adapters/DefaultQueryAdapter` or `src/adapters/DefaultMutationAdapter` is used.
 
@@ -101,19 +146,19 @@ If adapter is undefined then `src/adapters/DefaultQueryAdapter` or `src/adapters
 import * as gql from 'gql-query-builder'
 
 const query = gql.query({
-  operation: 'thoughts',
-  fields: ['id', 'name', 'thought']
+    operation: 'thoughts',
+    fields: ['id', 'name', 'thought']
 })
 
 console.log(query)
 
 // Output
 query {
-  thoughts {
-    id,
-    name,
-    thought
-  }
+    thoughts {
+        id
+        name
+        thought
+    }
 }
 ```
 
@@ -123,22 +168,72 @@ query {
 import * as gql from 'gql-query-builder'
 
 const query = gql.query({
-  operation: 'thought',
-  variables: { id: 1 },
-  fields: ['id', 'name', 'thought']
+    operation: 'thought',
+    variables: {
+        id: 1
+    },
+    fields: ['id', 'name', 'thought']
 })
 
 console.log(query)
 
 // Output
-query ($id: Int) {
-  thought (id: $id) {
-    id, name, thought
-  }
+query($id: Int) {
+    thought(id: $id) {
+        id
+        name
+        thought
+    }
 }
 
 // Variables
-{ "id": 1 }
+{
+    "id": 1
+}
+```
+
+**Query (with custom argument name):**
+
+```javascript
+import * as gql from 'gql-query-builder'
+
+const query = gql.query([{
+    operation: "someoperation",
+    fields: [{
+        operation: "nestedoperation",
+        fields: ["field1"],
+        variables: {
+            id2: {
+                name: "id",
+                type: "ID",
+                value: 123,
+            },
+        },
+    }, ],
+    variables: {
+        id1: {
+            name: "id",
+            type: "ID",
+            value: 456,
+        },
+    },
+}, ]);
+
+console.log(query)
+
+// Output
+query($id2: ID, $id1: ID) {
+    someoperation(id: $id1) {
+        nestedoperation(id: $id2) {
+            field1
+        }
+    }
+}
+
+// Variables
+{
+    "id": 1
+}
 ```
 
 **Query (with nested fields selection)**
@@ -147,43 +242,43 @@ query ($id: Int) {
 import * as gql from 'gql-query-builder'
 
 const query = gql({
-  operation: 'orders',
-  fields: [
-    'id',
-    'amount',
-    {
-     user: [
+    operation: 'orders',
+    fields: [
         'id',
-        'name',
-        'email',
+        'amount',
         {
-          address: [
-            'city',
-            'country'
-          ]
+            user: [
+                'id',
+                'name',
+                'email',
+                {
+                    address: [
+                        'city',
+                        'country'
+                    ]
+                }
+            ]
         }
-      ]
-    }
-  ]
+    ]
 })
 
 console.log(query)
 
 // Output
 query {
-  orders  {
-    id,
-    amount,
-    user {
-      id,
-      name,
-      email,
-      address {
-        city,
-        country
-      }
+    orders {
+        id
+        amount
+        user {
+            id
+            name
+            email
+            address {
+                city
+                country
+            }
+        }
     }
-  }
 }
 ```
 
@@ -193,27 +288,87 @@ query {
 import * as gql from 'gql-query-builder'
 
 const query = gql.query({
-  operation: 'userLogin',
-  variables: {
-    email: { value: 'jon.doe@example.com', required: true },
-    password: { value: '123456', required: true }
-  },
-  fields: ['userId', 'token']
+    operation: 'userLogin',
+    variables: {
+        email: {
+            value: 'jon.doe@example.com',
+            required: true
+        },
+        password: {
+            value: '123456',
+            required: true
+        }
+    },
+    fields: ['userId', 'token']
 })
 
 console.log(query)
 
 // Output
-query ($email: String!, $password: String!) {
-  userLogin (email: $email, password: $password) {
-    userId, token
-  }
+query($email: String!, $password: String!) {
+    userLogin(email: $email, password: $password) {
+        userId
+        token
+    }
 }
 
 // Variables
 {
-  email: "jon.doe@example.com",
-  password: "123456"
+    email: "jon.doe@example.com",
+    password: "123456"
+}
+```
+
+**Query (with operation name):**
+
+```javascript
+import * as gql from 'gql-query-builder'
+
+const query = gql.query({
+    operation: 'userLogin',
+    fields: ['userId', 'token']
+}, null, {
+    operationName: 'someoperation'
+})
+
+console.log(query)
+
+// Output
+query someoperation {
+    userLogin {
+        userId
+        token
+    }
+}
+```
+
+**Query (with empty fields):**
+
+```javascript
+import * as gql from 'gql-query-builder'
+
+const query = gql.query([{
+        operation: "getFilteredUsersCount",
+    },
+    {
+        operation: "getAllUsersCount",
+        fields: []
+    },
+    operation: "getFilteredUsers",
+    fields: [{
+        count: [],
+    }, ],
+]);
+
+console.log(query)
+
+// Output
+query {
+    getFilteredUsersCount
+    getAllUsersCount
+    getFilteredUsers {
+        count
+    }
 }
 ```
 
@@ -226,19 +381,19 @@ import * as gql from 'gql-query-builder'
 import MyQueryAdapter from 'where/adapters/live/MyQueryAdapter'
 
 const query = gql.query({
-  operation: 'thoughts',
-  fields: ['id', 'name', 'thought']
+    operation: 'thoughts',
+    fields: ['id', 'name', 'thought']
 }, MyQueryAdapter)
 
 console.log(query)
 
 // Output
 query SomethingIDidInMyAdapter {
-  thoughts {
-    id,
-    name,
-    thought
-  }
+    thoughts {
+        id
+        name
+        thought
+    }
 }
 ```
 
@@ -250,27 +405,27 @@ Take a peek at [DefaultQueryAdapter](src/adapters/DefaultQueryAdapter.ts) to get
 import * as gql from 'gql-query-builder'
 
 const query = gql.mutation({
-  operation: 'thoughtCreate',
-  variables: {
-    name: 'Tyrion Lannister',
-    thought: 'I drink and I know things.'
-  },
-  fields: ['id']
+    operation: 'thoughtCreate',
+    variables: {
+        name: 'Tyrion Lannister',
+        thought: 'I drink and I know things.'
+    },
+    fields: ['id']
 })
 
 console.log(query)
 
 // Output
-mutation ($name: String, $thought: String) {
-  thoughtCreate (name: $name, thought: $thought) {
-    id
-  }
+mutation($name: String, $thought: String) {
+    thoughtCreate(name: $name, thought: $thought) {
+        id
+    }
 }
 
 // Variables
 {
-  "name": "Tyrion Lannister",
-  "thought": "I drink and I know things."
+    "name": "Tyrion Lannister",
+    "thought": "I drink and I know things."
 }
 ```
 
@@ -280,29 +435,37 @@ mutation ($name: String, $thought: String) {
 import * as gql from 'gql-query-builder'
 
 const query = gql.mutation({
-  operation: 'userSignup',
-  variables: {
-    name: { value: 'Jon Doe' },
-    email: { value: 'jon.doe@example.com', required: true },
-    password: { value: '123456', required: true }
-  },
-  fields: ['userId']
+    operation: 'userSignup',
+    variables: {
+        name: {
+            value: 'Jon Doe'
+        },
+        email: {
+            value: 'jon.doe@example.com',
+            required: true
+        },
+        password: {
+            value: '123456',
+            required: true
+        }
+    },
+    fields: ['userId']
 })
 
 console.log(query)
 
 // Output
-mutation ($name: String, $email: String!, $password: String!) {
-  userSignup (name: $name, email: $email, password: $password) {
-    userId
-  }
+mutation($name: String, $email: String!, $password: String!) {
+    userSignup(name: $name, email: $email, password: $password) {
+        userId
+    }
 }
 
 // Variables
 {
-  name: "Jon Doe",
-  email: "jon.doe@example.com",
-  password: "123456"
+    name: "Jon Doe",
+    email: "jon.doe@example.com",
+    password: "123456"
 }
 ```
 
@@ -312,31 +475,35 @@ mutation ($name: String, $email: String!, $password: String!) {
 import * as gql from 'gql-query-builder'
 
 const query = gql.mutation({
-  operation: "userPhoneNumber",
-  variables: {
-    phone: {
-      value: { prefix: "+91", number: "9876543210" },
-      type: "PhoneNumber",
-      required: true
-    }
-  },
-  fields: ["id"]
+    operation: "userPhoneNumber",
+    variables: {
+        phone: {
+            value: {
+                prefix: "+91",
+                number: "9876543210"
+            },
+            type: "PhoneNumber",
+            required: true
+        }
+    },
+    fields: ["id"]
 })
 
 console.log(query)
 
 // Output
-mutation ($phone: PhoneNumber!) {
-  userPhoneNumber (phone: $phone) {
-    id
-  }
+mutation($phone: PhoneNumber!) {
+    userPhoneNumber(phone: $phone) {
+        id
+    }
 }
 
 // Variables
 {
-  phone: {
-    prefix: "+91", number: "9876543210"
-  }
+    phone: {
+        prefix: "+91",
+        number: "9876543210"
+    }
 }
 ```
 
@@ -401,19 +568,19 @@ import * as gql from 'gql-query-builder'
 import MyMutationAdapter from 'where/adapters/live/MyQueryAdapter'
 
 const query = gql.mutation({
-  operation: 'thoughts',
-  fields: ['id', 'name', 'thought']
+    operation: 'thoughts',
+    fields: ['id', 'name', 'thought']
 }, MyMutationAdapter)
 
 console.log(query)
 
 // Output
 mutation SomethingIDidInMyAdapter {
-  thoughts {
-    id,
-    name,
-    thought
-  }
+    thoughts {
+        id,
+        name,
+        thought
+    }
 }
 ```
 
@@ -455,19 +622,19 @@ import * as gql from 'gql-query-builder'
 import MySubscriptionAdapter from 'where/adapters/live/MyQueryAdapter'
 
 const query = gql.subscription({
-  operation: 'thoughts',
-  fields: ['id', 'name', 'thought']
+    operation: 'thoughts',
+    fields: ['id', 'name', 'thought']
 }, MySubscriptionAdapter)
 
 console.log(query)
 
 // Output
 subscription SomethingIDidInMyAdapter {
-  thoughts {
-    id,
-    name,
-    thought
-  }
+    thoughts {
+        id,
+        name,
+        thought
+    }
 }
 ```
 
