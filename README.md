@@ -38,6 +38,11 @@ const subscription = gql.subscription(options: object, adapter?: MyCustomSubscri
   <thead>
 
   <tr>
+<<<<<<< HEAD
+
+=======
+
+> > > > > > > 3dc80192f4f224fb140f643c6d5aff769dacc563
 
     <th>Name</th>
     <th>Description</th>
@@ -51,6 +56,11 @@ const subscription = gql.subscription(options: object, adapter?: MyCustomSubscri
   <tbody>
 
   <tr>
+<<<<<<< HEAD
+
+=======
+
+> > > > > > > 3dc80192f4f224fb140f643c6d5aff769dacc563
 
     <td>operation</td>
     <td>Name of operation to be executed on server</td>
@@ -62,6 +72,11 @@ const subscription = gql.subscription(options: object, adapter?: MyCustomSubscri
 
   </tr>
   <tr>
+<<<<<<< HEAD
+
+=======
+
+> > > > > > > 3dc80192f4f224fb140f643c6d5aff769dacc563
 
     <td>fields</td>
     <td>Selection of fields</td>
@@ -75,6 +90,11 @@ const subscription = gql.subscription(options: object, adapter?: MyCustomSubscri
 
   </tr>
   <tr>
+<<<<<<< HEAD
+
+=======
+
+> > > > > > > 3dc80192f4f224fb140f643c6d5aff769dacc563
 
     <td>variables</td>
     <td>Variables sent to the operation</td>
@@ -105,6 +125,11 @@ const subscription = gql.subscription(options: object, adapter?: MyCustomSubscri
   <thead>
 
   <tr>
+<<<<<<< HEAD
+
+=======
+
+> > > > > > > 3dc80192f4f224fb140f643c6d5aff769dacc563
 
     <th>Name</th>
     <th>Description</th>
@@ -112,12 +137,23 @@ const subscription = gql.subscription(options: object, adapter?: MyCustomSubscri
     <th>Required</th>
     <th>Example</th>
 
+<<<<<<< HEAD
+
+=======
+
+> > > > > > > 3dc80192f4f224fb140f643c6d5aff769dacc563
+
   </tr>
 
   </thead>
   <tbody>
 
   <tr>
+<<<<<<< HEAD
+
+=======
+
+> > > > > > > 3dc80192f4f224fb140f643c6d5aff769dacc563
 
     <td>operationName</td>
     <td>Name of operation to be sent to the server</td>
@@ -127,8 +163,14 @@ const subscription = gql.subscription(options: object, adapter?: MyCustomSubscri
       getThoughts, createThought
     </td>
 
+<<<<<<< HEAD
+
   </tr>
 
+=======
+
+  </tr>
+>>>>>>> 3dc80192f4f224fb140f643c6d5aff769dacc563
   </tbody>
 </table>
 
@@ -369,6 +411,104 @@ query {
     getFilteredUsers {
         count
     }
+}
+```
+
+**Query (with custom argument name):**
+
+```javascript
+import * as gql from 'gql-query-builder'
+
+const query = gql.query([{
+  operation: "someoperation",
+  fields: [{
+    operation: "nestedoperation",
+    fields: ["field1"],
+    variables: {
+      id2: {
+        name: "id",
+        type: "ID",
+        value: 123,
+      },
+    },
+  }, ],
+  variables: {
+    id1: {
+      name: "id",
+      type: "ID",
+      value: 456,
+    },
+  },
+}, ]);
+
+console.log(query)
+
+// Output
+query($id2: ID, $id1: ID) {
+  someoperation(id: $id1) {
+    nestedoperation(id: $id2) {
+      field1
+    }
+  }
+}
+
+// Variables
+{
+  "id1": 1,
+  "id2": 1
+}
+```
+
+**Query (with operation name):**
+
+```javascript
+import * as gql from 'gql-query-builder'
+
+const query = gql.query({
+  operation: 'userLogin',
+  fields: ['userId', 'token']
+}, null, {
+  operationName: 'someoperation'
+})
+
+console.log(query)
+
+// Output
+query someoperation {
+  userLogin {
+    userId
+    token
+  }
+}
+```
+
+**Query (with empty fields):**
+
+```javascript
+import * as gql from 'gql-query-builder'
+
+const query = gql.query([{
+  operation: "getFilteredUsersCount",
+},
+  {
+    operation: "getAllUsersCount",
+    fields: []
+  },
+  operation: "getFilteredUsers",
+  fields: [{
+  count: [],
+}, ],
+]);
+
+console.log(query)
+
+// Output
+query {
+  getFilteredUsersCount
+  getAllUsersCount
+  getFilteredUsers {
+    count
+  }
 }
 ```
 
